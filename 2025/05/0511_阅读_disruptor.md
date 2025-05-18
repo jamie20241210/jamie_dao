@@ -1,4 +1,17 @@
 
+# 文章
+得物
+https://tech.meituan.com/2016/11/18/disruptor.html
+https://www.iteye.com/blog/brokendreams-2255720
+http://ifeve.com/dissecting-disruptor-whats-so-special/
+https://github.com/LMAX-Exchange/disruptor/wiki/Performance-Results
+https://lmax-exchange.github.io/disruptor/
+https://logging.apache.org/log4j/2.x/manual/async.html
+
+## 实战文档
+https://juejin.cn/post/6844904095573114893?from=search-suggest
+https://www.sofastack.tech/blog/sofa-trcaer-disruptor-practice/
+
 
 # 和其他技术的区别
 ```
@@ -36,14 +49,57 @@ Canal+Disruptor实现高效的数据同步
 
 after自定义消费模式
 
+https://github.com/jamie20241210/jamie_relearning_mq/tree/disruptor_1
+
+```
+## sequence
+
+## endOfBatch
+一组消息的最后一个。
+```
+protected void onEvent(ClearingEvent event, boolean endOfBatch) throws Exception {
+
+    //非订单刷新/账户刷新 才更新底层redis
+    String requestType = event.getRequest().getType();
+    if(!"order.flush".equals(requestType) &&  !"account.recover".equals(requestType)){
+      this.results.addAll(event.getClearingResults());
+    }
+
+    this.deduplicationInfos.addAll(event.getDeduplicationInfos());
+    this.configs.putAll(event.getSystemConfigs());
+
+    if (endOfBatch) {
+      persist(event.getOffset());
+
+      this.deduplicationInfos.clear();
+      this.results.clear();
+      this.configs.clear();
+    }
+  }
 ```
 
+
+
+
 # 消费者等待策略
+Wait Strategy：等待策略，定义了当消费者无法从 RingBuffer 获取数据时，如何等待。
+
+# 时间循环处理器
+Event Processor：事件循环处理器，EventProcessor 继承了 Runnable 接口，它的子类实现了 run 方法，内部有一个 while 循环，不断尝试从 RingBuffer 中获取数据，交给 EventHandler 去处理。
+
+# 定序器
+Sequence：RingBuffer 是一个数组，Sequence （序号）就是用来标记生产者数据生产到哪了，消费者数据消费到哪了。
+
+Sequencer：分为单生产者和多生产者两种实现，生产者发布数据时需要先申请下可用序号，Sequencer 就是用来协调申请序号的。
+
+Sequence Barrier：见下文分析。
 
 
+# 使用建议
 
+Disruptor 是基于生产者消费者模式，如果生产快消费慢，就会导致生产者无法写入数据。因此，不建议在 Disruptor 消费线程中处理耗时较长的业务。
 
-
+一个 EventHandler 对应一个线程，一个线程只服务于一个 EventHandler。Disruptor 需要为每一个EventHandler（EventProcessor） 创建一个线程。因此在创建 Disruptor 时不推荐传入指定的线程池，而是由 Disruptor 自身根据 EventHandler 数量去创建对应的线程。
 
 
 

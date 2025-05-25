@@ -13,7 +13,7 @@
 1:M 31 Mar 2025 10:15:53.910 * Running mode=standalone, port=6379.
 1:M 31 Mar 2025 10:15:53.910 # WARNING: The TCP backlog setting of 511 cannot be enforced because /proc/sys/net/core/somaxconn is set to the lower value of 128.
 1:M 31 Mar 2025 10:15:53.910 * Server initialized
-1:M 31 Mar 2025 10:15:53.910 * Reading RDB base file on AOF loading...
+1:M 31 Mar 2025 10:15:53.910 * Reading RDB base file on AOF loading...ßß
 1:M 31 Mar 2025 10:15:53.910 * Loading RDB produced by version 7.4.1
 1:M 31 Mar 2025 10:15:53.910 * RDB age 159448 seconds
 1:M 31 Mar 2025 10:15:53.910 * RDB memory usage when created 3.08 Mb
@@ -41,9 +41,73 @@ Redis 依赖 Linux 的内存过量提交机制（ Memory Overcommit ），但当
 我看报错的提示查了一下是因为操作系统没开启 Linux 的内存过量提交机制，导致 AOF 文件写失败
 ```
 
+## redis 存储太大了
+```
+
+org.springframework.data.redis.serializer.SerializationException: Could not read JSON:String value length (20051112) exceeds the maximum allowed (20000000, from `StreamReadConstraints.getMaxStringLength()`) 
+
+	at org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer.deserialize(GenericJackson2JsonRedisSerializer.java:311)
+	at org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer.deserialize(GenericJackson2JsonRedisSerializer.java:281)
+	at org.springframework.data.redis.core.AbstractOperations.deserializeValue(AbstractOperations.java:380)
+	at org.springframework.data.redis.core.AbstractOperations$ValueDeserializingRedisCallback.doInRedis(AbstractOperations.java:63)
+	at org.springframework.data.redis.core.RedisTemplate.execute(RedisTemplate.java:411)
+	at org.springframework.data.redis.core.RedisTemplate.execute(RedisTemplate.java:378)
+	at org.springframework.data.redis.core.AbstractOperations.execute(AbstractOperations.java:117)
+	at org.springframework.data.redis.core.DefaultValueOperations.get(DefaultValueOperations.java:49)
+	at com.cjlabs.redis.TestRedisTemplateBigValue.redisTemplateReadBigValue(TestRedisTemplateBigValue.java:66)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+Caused by: com.fasterxml.jackson.core.exc.StreamConstraintsException: String value length (20051112) exceeds the maximum allowed (20000000, from `StreamReadConstraints.getMaxStringLength()`)
+	at com.fasterxml.jackson.core.StreamReadConstraints._constructException(StreamReadConstraints.java:654)
+	at com.fasterxml.jackson.core.StreamReadConstraints.validateStringLength(StreamReadConstraints.java:589)
+	at com.fasterxml.jackson.core.util.ReadConstrainedTextBuffer.validateStringLength(ReadConstrainedTextBuffer.java:27)
+	at com.fasterxml.jackson.core.util.TextBuffer.finishCurrentSegment(TextBuffer.java:1017)
+	at com.fasterxml.jackson.core.json.UTF8StreamJsonParser._finishString2(UTF8StreamJsonParser.java:2544)
+	at com.fasterxml.jackson.core.json.UTF8StreamJsonParser._finishAndReturnString(UTF8StreamJsonParser.java:2520)
+	at com.fasterxml.jackson.core.json.UTF8StreamJsonParser.getText(UTF8StreamJsonParser.java:294)
+	at com.fasterxml.jackson.databind.deser.std.BaseNodeDeserializer._deserializeAnyScalar(JsonNodeDeserializer.java:667)
+	at com.fasterxml.jackson.databind.deser.std.JsonNodeDeserializer.deserialize(JsonNodeDeserializer.java:109)
+	at com.fasterxml.jackson.databind.deser.std.JsonNodeDeserializer.deserialize(JsonNodeDeserializer.java:25)
+	at org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer$TypeResolver.readTree(GenericJackson2JsonRedisSerializer.java:402)
+	at org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer$TypeResolver.resolveType(GenericJackson2JsonRedisSerializer.java:366)
+	at org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer.resolveType(GenericJackson2JsonRedisSerializer.java:341)
+	at org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer.deserialize(GenericJackson2JsonRedisSerializer.java:309)
+	... 11 more
 
 
+```
 
+```
+默认20M
+```
+
+```
+
+数据存储完成！
+读取 String 结构耗时: 50 毫秒
+set size: 10
+读取 Set 结构耗时: 33 毫秒
+读取 Hash 结构耗时: 23 毫秒
+读取 List 结构耗时: 20 毫秒
+zsetValues size: 10
+读取 ZSet 结构耗时: 26 毫秒
+数据读取完成！
+
+
+18M
+
+数据存储完成！
+读取 String 结构耗时: 414 毫秒
+set size: 10
+读取 Set 结构耗时: 444 毫秒
+读取 Hash 结构耗时: 335 毫秒
+读取 List 结构耗时: 353 毫秒
+zsetValues size: 10
+读取 ZSet 结构耗时: 532 毫秒
+数据读取完成！
+
+```
 
 
 

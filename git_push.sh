@@ -6,6 +6,9 @@ if [ -z "$1" ]; then
   exit 1
 fi
 
+# 拉取远程仓库的最新更改
+git pull
+
 # 添加所有更改的文件
 git add .
 

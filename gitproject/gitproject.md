@@ -80,11 +80,43 @@ https://explainshell.com/
 https://roadmap.sh/
 ```
 
+# blockchain
+```
+
+
+```
+
+
+
 
 # 创业项目
 ```
 
 
 https://github.com/ljinkai/weekly
+
+
+https://github.com/aiprojecthub/nodebbs
+
+
+https://github.com/ruanyf/weekly/issues/8271
+
+
+竞品
+但是他缺了抑制
+https://github.com/TokenRollAI/webhooker
+
+
+https://github.com/openziti/zrok
+
+https://github.com/expo/expo
+Expo 是一个用于使用 React 构建通用原生应用的开源框架。它可在 Android、iOS 和 Web 上运行。
+
+
+```
+
+# vrc
+```
+https://github.com/misyaguziya/VRCT
 
 ```

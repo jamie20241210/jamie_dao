@@ -28,6 +28,26 @@ https://aiclotheschanger.net/
 https://x.com/aiclotheschange
 ```
 
+## 语音转文本
+```
+handy
+
+```
+
+# rust
+## rpui
+```
+rust gpui 
+
+```
+
+# 开发工具
+```
+yaak
+
+
+```
+
 
 # 数据可视化
 ```
